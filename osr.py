@@ -221,14 +221,14 @@ def main_worker(options):
             scheduler.step()
 
         with SummaryWriter(log_dir='./logs', comment='ixi_slice') as writer:
-            #data_batch, label_batch = next(iter(trainloader))
+            data_batch, label_batch = next(iter(trainloader))
             writer.add_scalar('Train/loss', float(loss_all), epoch)
             writer.add_scalar('Test/ACC', float(results['ACC']), epoch)
             writer.add_scalar('Test/AUROC', float(results['AUROC']), epoch)
             writer.add_scalar('Test/OSCR', float(results['OSCR']), epoch)
-            #grid = torchvision.utils.make_grid(data_batch)
-            #writer.add_image('input_image', grid, epoch)
-            #writer.add_graph(net, data_batch)
+            grid = torchvision.utils.make_grid(data_batch)
+            writer.add_image('input_image', grid, epoch)
+            writer.add_graph(net, data_batch)
     
     #with SummaryWriter(log_dir='./logs', comment='ixi_slice') as writer:
 
