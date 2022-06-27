@@ -19,7 +19,7 @@ from datasets.osr_dataloader import MNIST_OSR, CIFAR10_OSR, CIFAR100_OSR, SVHN_O
 from utils import Logger, save_networks, load_networks
 from core import train, train_cs, test
 
-from datetime import datetime
+import datetime
 
 import torchvision
 from torch.utils.tensorboard import SummaryWriter
