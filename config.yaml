@@ -1,0 +1,32 @@
+dataset_dir_name: /Volumes/My Anker/ixi_root
+
+download_dataset: False
+modalities: 
+   - T1
+   - T2
+  # - PD
+  # - MRA
+  #- DTI
+
+output_augmentation_dir_name: /Volumes/My Anker/ixi_augmentation
+output_slice_dir_name: ixi_slice
+
+Normalization: ZNormalization #, HistogramStandardization #
+
+asix: s
+slice: [20]
+
+transform: 
+ #- RandomFlip
+ #- RandomAffine
+ #- RandomElasticDeformation
+ #- RandomAnisotropy
+ #- RandomMotion
+ #- RandomGhosting
+ #- RandomSpike
+ #- RandomBiasField
+ #- RandomBlur
+ - RandomNoise
+ #- RandomSwap
+ #- RandomLabelsToImage
+ #- RandomGamma
