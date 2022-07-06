@@ -8,8 +8,8 @@ modalities:
    - MRA
   #- DTI
 
-output_augmentation_dir_name: /Volumes/My Anker/ixi_augmentation
-output_slice_dir_name: ixi_slice/new
+output_augmentation_dir_name: /Volumes/My Anker/ixi_root
+output_slice_dir_name: ixi_slice/new/
 
 Normalization: ZNormalization #, HistogramStandardization #
 
@@ -22,7 +22,7 @@ transform:
  #- RandomElasticDeformation
  #- RandomAnisotropy
  #- RandomMotion
- - RandomGhosting
+ #- RandomGhosting
  #- RandomSpike
  #- RandomBiasField
  #- RandomBlur
@@ -30,3 +30,6 @@ transform:
  #- RandomSwap
  #- RandomLabelsToImage
  #- RandomGamma
+ - MRA
+ - T2
+ - T1

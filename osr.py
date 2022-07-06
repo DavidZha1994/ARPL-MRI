@@ -196,47 +196,47 @@ def main_worker(options):
             optimizer, milestones=[30, 60, 90, 120])
 
     start_time = time.time()
+    with SummaryWriter(log_dir='./logs', comment='ixi_slice') as writer:
+        for epoch in range(options['max_epoch']):
+            print("==> Epoch {}/{}".format(epoch+1, options['max_epoch']))
 
-    for epoch in range(options['max_epoch']):
-        print("==> Epoch {}/{}".format(epoch+1, options['max_epoch']))
+            if options['cs']:
+                train_cs(net, netD, netG, criterion, criterionD,
+                        optimizer, optimizerD, optimizerG,
+                        trainloader, epoch=epoch, **options)
 
-        if options['cs']:
-            train_cs(net, netD, netG, criterion, criterionD,
-                     optimizer, optimizerD, optimizerG,
-                     trainloader, epoch=epoch, **options)
+            loss_all = train(net, criterion, optimizer,
+                            trainloader, epoch=epoch, **options)
 
-        loss_all = train(net, criterion, optimizer,
-                         trainloader, epoch=epoch, **options)
+            if options['eval_freq'] > 0 and (epoch+1) % options['eval_freq'] == 0 or (epoch+1) == options['max_epoch']:
+                print("==> Test", options['loss'])
+                results = test(net, criterion, testloader,
+                            outloader, epoch=epoch, **options)
+                print("Acc (%): {:.3f}\t AUROC (%): {:.3f}\t OSCR (%): {:.3f}\t".format(
+                    results['ACC'], results['AUROC'], results['OSCR']))
 
-        if options['eval_freq'] > 0 and (epoch+1) % options['eval_freq'] == 0 or (epoch+1) == options['max_epoch']:
-            print("==> Test", options['loss'])
-            results = test(net, criterion, testloader,
-                           outloader, epoch=epoch, **options)
-            print("Acc (%): {:.3f}\t AUROC (%): {:.3f}\t OSCR (%): {:.3f}\t".format(
-                results['ACC'], results['AUROC'], results['OSCR']))
+                save_networks(net, model_path, file_name, criterion=criterion)
 
-            save_networks(net, model_path, file_name, criterion=criterion)
+            if options['stepsize'] > 0:
+                scheduler.step()
 
-        if options['stepsize'] > 0:
-            scheduler.step()
+            
+                data_batch, label_batch = next(iter(trainloader))
+                writer.add_scalar('Train/loss', float(loss_all), epoch)
+                writer.add_scalar('Test/ACC', float(results['ACC']), epoch)
+                writer.add_scalar('Test/AUROC', float(results['AUROC']), epoch)
+                writer.add_scalar('Test/OSCR', float(results['OSCR']), epoch)
+                grid = torchvision.utils.make_grid(data_batch)
+                writer.add_image('input_image', grid, epoch)
+                writer.add_graph(net, data_batch)
+        
+        #with SummaryWriter(log_dir='./logs', comment='ixi_slice') as writer:
 
-        with SummaryWriter(log_dir='./logs', comment='ixi_slice') as writer:
-            data_batch, label_batch = next(iter(trainloader))
-            writer.add_scalar('Train/loss', float(loss_all), epoch)
-            writer.add_scalar('Test/ACC', float(results['ACC']), epoch)
-            writer.add_scalar('Test/AUROC', float(results['AUROC']), epoch)
-            writer.add_scalar('Test/OSCR', float(results['OSCR']), epoch)
-            grid = torchvision.utils.make_grid(data_batch)
-            writer.add_image('input_image', grid, epoch)
-            writer.add_graph(net, data_batch)
-    
-    #with SummaryWriter(log_dir='./logs', comment='ixi_slice') as writer:
+        elapsed = round(time.time() - start_time)
+        elapsed = str(datetime.timedelta(seconds=elapsed))
+        print("Finished. Total elapsed time (h:m:s): {}".format(elapsed))
 
-    elapsed = round(time.time() - start_time)
-    elapsed = str(datetime.timedelta(seconds=elapsed))
-    print("Finished. Total elapsed time (h:m:s): {}".format(elapsed))
-
-    return results
+        return results
 
 
 if __name__ == '__main__':
