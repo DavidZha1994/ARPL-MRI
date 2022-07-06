@@ -189,7 +189,7 @@ def plot_features(current_time, features, labels, num_classes, epoch, prefix):
                '8', '9', '10', '11'], loc='upper right')
     dirname = osp.join('log', current_time, prefix)
     if not osp.exists(dirname):
-        os.mkdir(dirname)
+        os.makedirs(dirname)
     save_name = osp.join(dirname, 'epoch_' + str(epoch+1) + '.png')
     plt.savefig(save_name, bbox_inches='tight')
     plt.close()
