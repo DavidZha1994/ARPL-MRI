@@ -161,7 +161,7 @@ def weights_init_ABN(m):
         m.bias.data.fill_(0)
 
 class classifier32ABN(nn.Module):
-    def __init__(self, num_classes=10, num_ABN=2):
+    def __init__(self, num_classes=10, num_ABN=2, use_gpu = True):
         super(self.__class__, self).__init__()
         self.num_classes = num_classes
         self.conv1 = nn.Conv2d(3,       64,     3, 1, 1, bias=False)
@@ -195,8 +195,13 @@ class classifier32ABN(nn.Module):
         self.dr2 = nn.Dropout2d(0.2)
         self.dr3 = nn.Dropout2d(0.2)
 
+        self.fc1 = nn.Linear(128, 2)
+        self.prelu_fc1 = nn.PReLU()
+        self.fc2 = nn.Linear(2, num_classes)
+
         self.apply(weights_init_ABN)
-        self.cuda()
+        if use_gpu:
+            self.cuda()
 
     def forward(self, x, return_feature=True, bn_label=None):
         if bn_label is None:
@@ -236,6 +241,8 @@ class classifier32ABN(nn.Module):
 
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
+        x = self.prelu_fc1(self.fc1(x))
+        #y = self.fc2(x)
         y = self.fc(x)
         if return_feature:
             return x, y

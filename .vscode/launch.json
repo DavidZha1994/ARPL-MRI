@@ -11,7 +11,8 @@
             "program": "osr.py",
             "console": "integratedTerminal",
             "args": ["--dataset","ixi_slice",
-                    "--loss","ARPLoss"]
+                    "--loss","ARPLoss",
+                    "--cs"]
         }
     ]
 }
