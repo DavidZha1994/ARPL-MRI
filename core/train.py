@@ -77,7 +77,7 @@ def train_cs(net, netD, netG, criterion, criterionD, optimizer, optimizerD, opti
         data, labels = Variable(data), Variable(labels)
 
         noise = torch.FloatTensor(
-            data.size(0), options['nz'], options['ns'], options['ns']).normal_(0, 1).cuda()
+            data.size(0), options['nz'], options['ns'], options['ns']).normal_(0, 1)
         if options['use_gpu']:
             noise = noise.cuda()
         noise = Variable(noise)
@@ -112,8 +112,12 @@ def train_cs(net, netD, netG, criterion, criterionD, optimizer, optimizerD, opti
         errG = criterionD(output, targetv)
 
         # minimize the true distribution
-        x, y = net(fake, True, 1 *
-                   torch.ones(data.shape[0], dtype=torch.long).cuda())
+        if options['use_gpu']:
+            x, y = net(fake, True, 1 *
+                    torch.ones(data.shape[0], dtype=torch.long).cuda())
+        else:
+            x, y = net(fake, True, 1 *
+                    torch.ones(data.shape[0], dtype=torch.long))
         errG_F = criterion.fake_loss(x).mean()
         generator_loss = errG + options['beta'] * errG_F
         generator_loss.backward()
@@ -127,19 +131,28 @@ def train_cs(net, netD, netG, criterion, criterionD, optimizer, optimizerD, opti
         ###########################
         # cross entropy loss
         optimizer.zero_grad()
-        x, y = net(data, True, 0 *
-                   torch.ones(data.shape[0], dtype=torch.long).cuda())
+        if options['use_gpu']:
+            x, y = net(data, True, 0 *
+                    torch.ones(data.shape[0], dtype=torch.long).cuda())
+        else:
+            x, y = net(data, True, 0 *
+                    torch.ones(data.shape[0], dtype=torch.long))
         _, loss = criterion(x, y, labels)
 
         # KL divergence
         noise = torch.FloatTensor(
-            data.size(0), options['nz'], options['ns'], options['ns']).normal_(0, 1).cuda()
+            data.size(0), options['nz'], options['ns'], options['ns']).normal_(0, 1)
         if options['use_gpu']:
             noise = noise.cuda()
         noise = Variable(noise)
         fake = netG(noise)
-        x, y = net(fake, True, 1 *
-                   torch.ones(data.shape[0], dtype=torch.long).cuda())
+        if options['use_gpu']:
+            x, y = net(fake, True, 1 *
+                    torch.ones(data.shape[0], dtype=torch.long).cuda())
+        else:
+            x, y = net(fake, True, 1 *
+                    torch.ones(data.shape[0], dtype=torch.long))
+
         F_loss_fake = criterion.fake_loss(x).mean()
         total_loss = loss + options['beta'] * F_loss_fake
         total_loss.backward()

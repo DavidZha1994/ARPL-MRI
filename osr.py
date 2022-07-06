@@ -196,7 +196,8 @@ def main_worker(options):
             optimizer, milestones=[30, 60, 90, 120])
 
     start_time = time.time()
-    with SummaryWriter(log_dir='./logs', comment='ixi_slice') as writer:
+    log_dir=f'./logs/{start_time}'
+    with SummaryWriter(log_dir = log_dir, comment='ixi_slice') as writer:
         for epoch in range(options['max_epoch']):
             print("==> Epoch {}/{}".format(epoch+1, options['max_epoch']))
 
