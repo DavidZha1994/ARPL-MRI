@@ -196,7 +196,8 @@ def main_worker(options):
             optimizer, milestones=[30, 60, 90, 120])
 
     start_time = time.time()
-    log_dir=f'./logs/{start_time}'
+    current_time = time.strftime("%Y-%m-%d_%H_%M_%s",time.localtime())
+    log_dir=f'./logs/{current_time}'
     with SummaryWriter(log_dir = log_dir, comment='ixi_slice') as writer:
         for epoch in range(options['max_epoch']):
             print("==> Epoch {}/{}".format(epoch+1, options['max_epoch']))
@@ -275,7 +276,8 @@ if __name__ == '__main__':
         )
 
         dir_name = '{}_{}'.format(options['model'], options['loss'])
-        dir_path = os.path.join(options['outf'], 'results', dir_name)
+        current_time = time.strftime("%Y-%m-%d_%H_%M_%s",time.localtime())
+        dir_path = os.path.join(options['outf'], 'results', dir_name, current_time)
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
 

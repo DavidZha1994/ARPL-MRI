@@ -12,7 +12,8 @@
             "console": "integratedTerminal",
             "args": ["--dataset","ixi_slice",
                     "--loss","ARPLoss",
-                    "--cs"]
+                    //"--cs"
+                ]
         }
     ]
 }
