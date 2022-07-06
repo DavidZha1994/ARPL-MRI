@@ -242,8 +242,8 @@ class classifier32ABN(nn.Module):
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
         x = self.prelu_fc1(self.fc1(x))
-        #y = self.fc2(x)
-        y = self.fc(x)
+        y = self.fc2(x)
+        #y = self.fc(x)
         if return_feature:
             return x, y
         else:
