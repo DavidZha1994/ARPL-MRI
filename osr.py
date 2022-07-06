@@ -67,7 +67,7 @@ parser.add_argument('--cs', action='store_true',
                     help="Confusing Sample", default=False)
 
 
-def main_worker(options):
+def main_worker(options, current_time):
     torch.manual_seed(options['seed'])
     os.environ['CUDA_VISIBLE_DEVICES'] = options['gpu']
     use_gpu = torch.cuda.is_available()
@@ -170,7 +170,7 @@ def main_worker(options):
     if options['eval']:
         net, criterion = load_networks(
             net, model_path, file_name, criterion=criterion)
-        results = test(net, criterion, testloader,
+        results = test(current_time, net, criterion, testloader,
                        outloader, epoch=0, **options)
         print("Acc (%): {:.3f}\t AUROC (%): {:.3f}\t OSCR (%): {:.3f}\t".format(
             results['ACC'], results['AUROC'], results['OSCR']))
@@ -196,7 +196,7 @@ def main_worker(options):
             optimizer, milestones=[30, 60, 90, 120])
 
     start_time = time.time()
-    current_time = time.strftime("%Y-%m-%d_%H_%M_%s",time.localtime())
+
     log_dir=f'./logs/{current_time}'
     with SummaryWriter(log_dir = log_dir, comment='ixi_slice') as writer:
         for epoch in range(options['max_epoch']):
@@ -207,12 +207,12 @@ def main_worker(options):
                         optimizer, optimizerD, optimizerG,
                         trainloader, epoch=epoch, **options)
 
-            loss_all = train(net, criterion, optimizer,
+            loss_all = train(current_time, net, criterion, optimizer,
                             trainloader, epoch=epoch, **options)
 
             if options['eval_freq'] > 0 and (epoch+1) % options['eval_freq'] == 0 or (epoch+1) == options['max_epoch']:
                 print("==> Test", options['loss'])
-                results = test(net, criterion, testloader,
+                results = test(current_time, net, criterion, testloader,
                             outloader, epoch=epoch, **options)
                 print("Acc (%): {:.3f}\t AUROC (%): {:.3f}\t OSCR (%): {:.3f}\t".format(
                     results['ACC'], results['AUROC'], results['OSCR']))
@@ -287,7 +287,7 @@ if __name__ == '__main__':
         else:
             file_name = options['dataset'] + '.csv'
 
-        res = main_worker(options)
+        res = main_worker(options, current_time)
         res['unknown'] = unknown
         res['known'] = known
         results[str(i)] = res

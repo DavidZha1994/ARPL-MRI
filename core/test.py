@@ -11,7 +11,7 @@ import torch.nn.functional as F
 
 from core import evaluation
 
-def test(net, criterion, testloader, outloader, epoch=None, **options):
+def test(current_time, net, criterion, testloader, outloader, epoch=None, **options):
     net.eval()
     correct, total = 0, 0
 
@@ -62,7 +62,7 @@ def test(net, criterion, testloader, outloader, epoch=None, **options):
     _pred_u = np.concatenate(_pred_u, 0)
     _labels = np.concatenate(_labels, 0)
 
-    plot_features(all_features_k, _labels, options['num_classes'], epoch, prefix='test_k')
+    plot_features(current_time, all_features_k, _labels, options['num_classes'], epoch, prefix='test_k')
     #plot_features(all_features_u, _labels, options['num_classes'], epoch, prefix='test_u')
     # Out-of-Distribution detction evaluation
     x1, x2 = np.max(_pred_k, axis=1), np.max(_pred_u, axis=1)
@@ -76,7 +76,7 @@ def test(net, criterion, testloader, outloader, epoch=None, **options):
 
     return results
 
-def plot_features(features, labels, num_classes, epoch, prefix):
+def plot_features(current_time, features, labels, num_classes, epoch, prefix):
     """Plot features on 2D plane.
 
     Args:
@@ -92,7 +92,7 @@ def plot_features(features, labels, num_classes, epoch, prefix):
             s=1,
         )
     plt.legend(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'], loc='upper right')
-    dirname = osp.join('log', prefix)
+    dirname = osp.join('log', current_time, prefix)
     if not osp.exists(dirname):
         os.mkdir(dirname)
     save_name = osp.join(dirname, 'epoch_' + str(epoch+1) + '.png')

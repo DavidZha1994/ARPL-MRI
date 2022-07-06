@@ -203,9 +203,9 @@ class classifier32ABN(nn.Module):
         if use_gpu:
             self.cuda()
 
-    def forward(self, x, return_feature=True, bn_label=None, use_gpu= False):
+    def forward(self, x, return_feature=True, bn_label=None):
         if bn_label is None:
-            if use_gpu:
+            if torch.cuda.is_available():
                 bn_label = 0 * torch.ones(x.shape[0], dtype=torch.long).cuda()
             else:
                 bn_label = 0 * torch.ones(x.shape[0], dtype=torch.long)

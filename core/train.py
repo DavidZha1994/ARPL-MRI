@@ -10,7 +10,7 @@ import matplotlib
 matplotlib.use('Agg')
 
 
-def train(net, criterion, optimizer, trainloader, epoch=None, **options):
+def train(current_time, net, criterion, optimizer, trainloader, epoch=None, **options):
     net.train()
     losses = AverageMeter()
 
@@ -48,7 +48,7 @@ def train(net, criterion, optimizer, trainloader, epoch=None, **options):
 
     all_features = np.concatenate(all_features, 0)
     all_labels = np.concatenate(all_labels, 0)
-    plot_features(all_features, all_labels,
+    plot_features(current_time, all_features, all_labels,
                   options['num_classes'], epoch, prefix='train')
 
     return loss_all
@@ -169,7 +169,7 @@ def train_cs(net, netD, netG, criterion, criterionD, optimizer, optimizerD, opti
     return loss_all
 
 
-def plot_features(features, labels, num_classes, epoch, prefix):
+def plot_features(current_time, features, labels, num_classes, epoch, prefix):
     """Plot features on 2D plane.
 
     Args:
@@ -187,7 +187,7 @@ def plot_features(features, labels, num_classes, epoch, prefix):
         )
     plt.legend(['0', '1', '2', '3', '4', '5', '6', '7',
                '8', '9', '10', '11'], loc='upper right')
-    dirname = osp.join('log', prefix)
+    dirname = osp.join('log', current_time, prefix)
     if not osp.exists(dirname):
         os.mkdir(dirname)
     save_name = osp.join(dirname, 'epoch_' + str(epoch+1) + '.png')
