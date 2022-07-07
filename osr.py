@@ -129,7 +129,7 @@ def main_worker(options, current_time):
     )
 
     # Model
-    print("Creating model: {}".format(options['model']))
+    #print("Creating model: {}".format(options['model']))
     if options['cs']:
         net = classifier32ABN(
             num_classes=options['num_classes'], use_gpu=options['use_gpu'])
