@@ -23,7 +23,6 @@ def test(current_time, net, criterion, testloader, outloader, epoch=None, **opti
     with torch.no_grad():
         for batch_idx, (data, labels) in enumerate(testloader):
             if options['use_gpu']:
-                print('test is using GPU')
                 data, labels = data.cuda(), labels.cuda()
             
             with torch.set_grad_enabled(False):

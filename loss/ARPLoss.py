@@ -29,7 +29,6 @@ class ARPLoss(nn.CrossEntropyLoss):
         center_batch = self.points[labels, :]
         _dis_known = (x - center_batch).pow(2).mean(1)
         if self.use_gpu:
-            print('Loss is using GPU')
             target = torch.ones(_dis_known.size()).cuda()
         else:
             target = torch.ones(_dis_known.size())
