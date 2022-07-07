@@ -274,7 +274,7 @@ if __name__ == '__main__':
         elif options['dataset'] == 'ixi_slice':
             img_size = 64
             options['lr'] = 0.001
-            unknown = list(set(list(range(0, 12))) - set(known))
+            unknown = list(set(list(range(0, 17))) - set(known))
         else:
             unknown = list(set(list(range(0, 10))) - set(known))
 
