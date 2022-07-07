@@ -232,9 +232,9 @@ def main_worker(options, current_time):
                     GAN_path = os.path.join(model_path, current_time, 'samples')
                     mkdir_if_missing(GAN_path)
                     vutils.save_image(fake.data, '%s/gan_samples_epoch_%03d.png'%(GAN_path, epoch), normalize=True)
+
             if options['stepsize'] > 0:
                 scheduler.step()
-
             
                 data_batch, label_batch = next(iter(trainloader))
                 writer.add_scalar('Train/loss', float(loss_all), epoch)
@@ -245,7 +245,8 @@ def main_worker(options, current_time):
                 writer.add_image('input_image', grid, epoch)
                 writer.add_graph(net, data_batch)
         
-        #with SummaryWriter(log_dir='./logs', comment='ixi_slice') as writer:
+                sys.stdout = Logger(osp.join(options['outf'],current_time, 'logs.txt'))
+        
 
         elapsed = round(time.time() - start_time)
         elapsed = str(datetime.timedelta(seconds=elapsed))
@@ -305,4 +306,4 @@ if __name__ == '__main__':
         results[str(i)] = res
         df = pd.DataFrame(results)
         df.to_csv(os.path.join(dir_path, file_name))
-        sys.stdout = Logger(osp.join(options['outf'],current_time, 'logs.txt'))
+        
