@@ -229,7 +229,7 @@ def main_worker(options, current_time):
                 if options['cs']: 
                     save_GAN(netG, netD, model_path, file_name)
                     fake = netG(fixed_noise)
-                    GAN_path = os.path.join(model_path, 'samples')
+                    GAN_path = os.path.join(model_path, current_time, 'samples')
                     mkdir_if_missing(GAN_path)
                     vutils.save_image(fake.data, '%s/gan_samples_epoch_%03d.png'%(GAN_path, epoch), normalize=True)
             if options['stepsize'] > 0:
