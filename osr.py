@@ -1,4 +1,5 @@
 import os
+import sys
 import argparse
 import datetime
 import time
@@ -12,11 +13,12 @@ import torch.nn.functional as F
 from torch.optim import lr_scheduler
 import torch.multiprocessing as mp
 import torch.backends.cudnn as cudnn
+import torchvision.utils as vutils
 
 from models import gan
 from models.models import classifier32, classifier32ABN
 from datasets.osr_dataloader import MNIST_OSR, CIFAR10_OSR, CIFAR100_OSR, SVHN_OSR, Tiny_ImageNet_OSR, ixi_slice_OSR
-from utils import Logger, save_networks, load_networks
+from utils import Logger, save_networks, load_networks, save_GAN, mkdir_if_missing
 from core import train, train_cs, test
 
 import datetime
@@ -66,6 +68,10 @@ parser.add_argument('--eval', action='store_true', help="Eval", default=False)
 parser.add_argument('--cs', action='store_true',
                     help="Confusing Sample", default=False)
 
+args = parser.parse_args()
+options = vars(args)
+
+sys.stdout = Logger(osp.join(options['outf'], 'logs.txt'))
 
 def main_worker(options, current_time):
     torch.manual_seed(options['seed'])
@@ -110,6 +116,7 @@ def main_worker(options, current_time):
         Data = ixi_slice_OSR(known=options['known'], dataroot=options['dataroot'],
                              batch_size=options['batch_size'], img_size=options['img_size'])
         trainloader, testloader, outloader = Data.train_loader, Data.test_loader, Data.out_loader
+        
     options['num_classes'] = Data.num_classes
 
     feat_dim = 2
@@ -218,7 +225,12 @@ def main_worker(options, current_time):
                     results['ACC'], results['AUROC'], results['OSCR']))
 
                 save_networks(net, model_path, file_name, criterion=criterion)
-
+                if options['cs']: 
+                    save_GAN(netG, netD, model_path, file_name)
+                    fake = netG(fixed_noise)
+                    GAN_path = os.path.join(model_path, 'samples')
+                    mkdir_if_missing(GAN_path)
+                    vutils.save_image(fake.data, '%s/gan_samples_epoch_%03d.png'%(GAN_path, epoch), normalize=True)
             if options['stepsize'] > 0:
                 scheduler.step()
 
@@ -242,8 +254,7 @@ def main_worker(options, current_time):
 
 
 if __name__ == '__main__':
-    args = parser.parse_args()
-    options = vars(args)
+    
     options['dataroot'] = os.path.join(options['dataroot'], options['dataset'])
     img_size = 32
     results = dict()
