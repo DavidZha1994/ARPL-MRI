@@ -72,7 +72,7 @@ parser.add_argument('--cs', action='store_true',
 args = parser.parse_args()
 options = vars(args)
 
-sys.stdout = Logger(osp.join(options['outf'], 'logs.txt'))
+
 
 def main_worker(options, current_time):
     torch.manual_seed(options['seed'])
@@ -305,3 +305,4 @@ if __name__ == '__main__':
         results[str(i)] = res
         df = pd.DataFrame(results)
         df.to_csv(os.path.join(dir_path, file_name))
+        sys.stdout = Logger(osp.join(options['outf'],current_time, 'logs.txt'))
