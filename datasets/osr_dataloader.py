@@ -370,7 +370,7 @@ class ixi_slice_OSR(object):
     def __init__(self, known, dataroot='./data/ixi_slice', use_gpu=True, num_workers=12, batch_size=256, img_size=64):
         self.num_classes = len(known)
         self.known = known
-        self.unknown = list(set(list(range(0, 12))) - set(known))
+        self.unknown = list(set(list(range(0, 17))) - set(known))
 
         print('Selected Labels: ', known)
 

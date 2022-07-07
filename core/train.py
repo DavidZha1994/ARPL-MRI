@@ -20,7 +20,6 @@ def train(current_time, net, criterion, optimizer, trainloader, epoch=None, **op
     all_features, all_labels = [], []
     for batch_idx, (data, labels) in enumerate(trainloader):
         if options['use_gpu']:
-            print('train is using GPU')
             data, labels = data.cuda(), labels.cuda()
 
         with torch.set_grad_enabled(True):
@@ -69,7 +68,6 @@ def train_cs(net, netD, netG, criterion, criterionD, optimizer, optimizerD, opti
     for batch_idx, (data, labels) in enumerate(trainloader):
         gan_target = torch.FloatTensor(labels.size()).fill_(0)
         if options['use_gpu']:
-            print('train is using GPU')
             data = data.cuda(non_blocking=True)
             labels = labels.cuda(non_blocking=True)
             gan_target = gan_target.cuda()
