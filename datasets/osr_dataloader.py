@@ -358,10 +358,10 @@ class ixi_slice_Filter(ImageFolder):
         new_datas, new_targets = [], []
         for i in range(len(datas)):
             if datas[i][1] in known:
-                new_item = (datas[i][0], datas[i][1])
+                new_item = (datas[i][0], known.index(datas[i][1]))
                 new_datas.append(new_item)
                 # new_targets.append(targets[i])
-                new_targets.append(targets[i])
+                new_targets.append(known.index(targets[i]))
         datas, targets = new_datas, new_targets
         self.samples, self.imgs, self.targets = datas, datas, targets
 

@@ -48,7 +48,7 @@ def train(current_time, net, criterion, optimizer, trainloader, epoch=None, **op
     all_features = np.concatenate(all_features, 0)
     all_labels = np.concatenate(all_labels, 0)
     plot_features(current_time, all_features, all_labels,
-                  options['num_classes'], epoch, prefix='train')
+                  options['num_classes'], options['known'], epoch, prefix='train')
 
     return loss_all
 
@@ -166,8 +166,9 @@ def train_cs(net, netD, netG, criterion, criterionD, optimizer, optimizerD, opti
 
     return loss_all
 
+from torchvision.datasets import ImageFolder
 
-def plot_features(current_time, features, labels, num_classes, epoch, prefix):
+def plot_features(current_time, features, labels, num_classes, known, epoch, prefix):
     """Plot features on 2D plane.
 
     Args:
@@ -183,8 +184,16 @@ def plot_features(current_time, features, labels, num_classes, epoch, prefix):
             c=colors[label_idx],
             s=1,
         )
-    plt.legend(['0', '1', '2', '3', '4', '5', '6', '7',
-               '8', '9', '10', '11'], loc='upper right')
+
+    trainset = ImageFolder(os.path.join('./data', 'ixi_slice', 'ixi_slice', 'train'))
+
+    legendname = []
+    for i in known:
+        for key, value in trainset.class_to_idx.items():
+            if i == value:
+                legendname.append(key)
+
+    plt.legend(legendname, loc='upper right')
     dirname = osp.join('log', current_time, prefix)
     if not osp.exists(dirname):
         os.makedirs(dirname)
