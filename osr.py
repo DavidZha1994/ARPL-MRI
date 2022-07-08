@@ -119,8 +119,9 @@ def main_worker(options, current_time):
         trainloader, testloader, outloader = Data.train_loader, Data.test_loader, Data.out_loader
         
     options['num_classes'] = Data.num_classes
-
+    options['legendname'] = Data.legendname
     feat_dim = 2
+    
     # Loss
     options.update(
         {

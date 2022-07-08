@@ -393,6 +393,12 @@ class ixi_slice_OSR(object):
         print('All Train Data:', len(trainset))
         trainset.__Filter__(known=self.known)
 
+        self.legendname = []
+        for i in known:
+            for key, value in trainset.class_to_idx.items():
+                if i == value:
+                    self.legendname.append(key)
+
         self.train_loader = torch.utils.data.DataLoader(
             trainset, batch_size=batch_size, shuffle=True,
             num_workers=num_workers, pin_memory=pin_memory,
