@@ -358,22 +358,22 @@ class ixi_slice_Filter(ImageFolder):
         new_datas, new_targets = [], []
         for i in range(len(datas)):
             if datas[i][1] in known:
-                new_item = (datas[i][0], known.index(datas[i][1]))
+                new_item = (datas[i][0], datas[i][1])
                 new_datas.append(new_item)
                 # new_targets.append(targets[i])
-                new_targets.append(known.index(targets[i]))
+                new_targets.append(targets[i])
         datas, targets = new_datas, new_targets
         self.samples, self.imgs, self.targets = datas, datas, targets
 
 
 class ixi_slice_OSR(object):
-    def __init__(self, known, dataroot='./data/ixi_slice', use_gpu=True, num_workers=12, batch_size=256, img_size=64):
+    def __init__(self, known, dataroot='./data/ixi_slice', use_gpu=True, num_workers=10, batch_size=256, img_size=64):
         self.num_classes = len(known)
         self.known = known
         self.unknown = list(set(list(range(0, 17))) - set(known))
 
         print('Selected Labels: ', known)
-
+        print('Selected unknown Labels: ', self.unknown)
         train_transform = transforms.Compose([
             transforms.Resize((img_size, img_size)),
             transforms.RandomCrop(img_size, padding=4),
