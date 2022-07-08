@@ -415,7 +415,7 @@ class ixi_slice_OSR(object):
         )
 
         outset = ixi_slice_Filter(os.path.join(
-            dataroot, 'ixi_slice', 'val'), transform)
+            dataroot, 'ixi_slice', 'train'), transform)
         outset.__Filter__(known=self.unknown)
 
         self.out_loader = torch.utils.data.DataLoader(
