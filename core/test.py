@@ -92,8 +92,8 @@ def plot_features(current_time, all_features_k, all_features_u, labels, num_clas
         )
 
     plt.scatter(
-            all_features_u[0],
-            all_features_u[1],
+            all_features_u[:,0],
+            all_features_u[:,1],
             c='0',
             s=1,
         )
