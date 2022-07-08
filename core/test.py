@@ -61,7 +61,7 @@ def test(current_time, net, criterion, testloader, outloader, epoch=None, **opti
     _pred_u = np.concatenate(_pred_u, 0)
     _labels = np.concatenate(_labels, 0)
 
-    plot_features(current_time, all_features_k, _labels, options['num_classes'], options['legendname'], epoch, prefix='test_k')
+    plot_features(current_time, all_features_k, all_features_u, _labels, options['num_classes'], options['legendname'], epoch, prefix='test_k')
     #plot_features(all_features_u, _labels, options['num_classes'], epoch, prefix='test_u')
     # Out-of-Distribution detction evaluation
     x1, x2 = np.max(_pred_k, axis=1), np.max(_pred_u, axis=1)
@@ -75,7 +75,7 @@ def test(current_time, net, criterion, testloader, outloader, epoch=None, **opti
 
     return results
 
-def plot_features(current_time, features, labels, num_classes, legendname, epoch, prefix):
+def plot_features(current_time, all_features_k, all_features_u, labels, num_classes, legendname, epoch, prefix):
     """Plot features on 2D plane.
 
     Args:
@@ -85,11 +85,18 @@ def plot_features(current_time, features, labels, num_classes, legendname, epoch
     colors = ['C0', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11']
     for label_idx in range(num_classes):
         plt.scatter(
-            features[labels==label_idx, 0],
-            features[labels==label_idx, 1],
+            all_features_k[labels==label_idx, 0],
+            all_features_k[labels==label_idx, 1],
             c=colors[label_idx],
             s=1,
         )
+    plt.scatter(
+            all_features_u[0],
+            all_features_u[1],
+            c=0.5,
+            s=1,
+        )
+    legendname.append('unknown')
     plt.legend(legendname, loc='upper right')
     dirname = osp.join('log', current_time, prefix)
     if not osp.exists(dirname):
