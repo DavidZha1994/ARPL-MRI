@@ -90,10 +90,11 @@ def plot_features(current_time, all_features_k, all_features_u, labels, num_clas
             c=colors[label_idx],
             s=1,
         )
+
     plt.scatter(
             all_features_u[0],
             all_features_u[1],
-            c=0.5,
+            c='0.5',
             s=1,
         )
     legendname.append('unknown')
