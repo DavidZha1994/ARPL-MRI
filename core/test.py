@@ -109,7 +109,7 @@ def plot_features(current_time, all_features_k, all_features_u, labels, all_cent
             all_center_batch[:,0],
             all_center_batch[:,1],
             c='0',
-            marker= '^',
+            marker = 6,
             s=1,
         )
     legendname.append('reciprocal point')

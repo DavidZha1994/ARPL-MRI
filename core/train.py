@@ -185,7 +185,7 @@ def plot_features(current_time, features, labels, num_classes, legendname, epoch
             s=1,
         )
 
-    plt.legend(legendname, loc='upper right')
+    plt.legend(legendname, loc= (1.1,0.5))
     dirname = osp.join('log', current_time, prefix)
     if not osp.exists(dirname):
         os.makedirs(dirname)
