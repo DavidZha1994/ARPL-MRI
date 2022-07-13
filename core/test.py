@@ -19,6 +19,7 @@ def test(current_time, net, criterion, testloader, outloader, epoch=None, **opti
 
     _pred_k, _pred_u, _labels = [], [], []
     all_features_k, all_features_u = [], []
+    all_center_batch = []
 
     with torch.no_grad():
         for batch_idx, (data, labels) in enumerate(testloader):
@@ -27,13 +28,14 @@ def test(current_time, net, criterion, testloader, outloader, epoch=None, **opti
             
             with torch.set_grad_enabled(False):
                 x, y = net(data, True)
-                logits, _ = criterion(x, y)
+                logits, _, center_batch, _dis_known = criterion(x, y)
                 predictions = logits.data.max(1)[1]
                 total += labels.size(0)
                 correct += (predictions == labels.data).sum()
             
                 all_features_k.append(x.data.cpu().numpy())
                 _pred_k.append(logits.data.cpu().numpy())
+                all_center_batch.append(center_batch.data.cpu().numpy())
                 _labels.append(labels.data.cpu().numpy())
                 print("Batch {}/{}\t)"
                     .format(batch_idx+1, len(testloader)))
@@ -44,10 +46,11 @@ def test(current_time, net, criterion, testloader, outloader, epoch=None, **opti
             
             with torch.set_grad_enabled(False):
                 x, y = net(data, True)
-                logits, _ = criterion(x, y)
+                logits, _,center_batch, _dis_known = criterion(x, y)
 
                 all_features_u.append(x.data.cpu().numpy())
                 _pred_u.append(logits.data.cpu().numpy())
+                all_center_batch.append(center_batch.data.cpu().numpy())
                 print("Batch {}/{}\t)"
                     .format(batch_idx+1, len(outloader)))
 
@@ -57,11 +60,13 @@ def test(current_time, net, criterion, testloader, outloader, epoch=None, **opti
 
     all_features_k = np.concatenate(all_features_k, 0)
     all_features_u = np.concatenate(all_features_u, 0)
+    all_center_batch = np.concatenate(all_center_batch, 0)
+    
     _pred_k = np.concatenate(_pred_k, 0)
     _pred_u = np.concatenate(_pred_u, 0)
     _labels = np.concatenate(_labels, 0)
 
-    plot_features(current_time, all_features_k, all_features_u, _labels, options['num_classes'], options['legendname'], epoch, prefix='test_k')
+    plot_features(current_time, all_features_k, all_features_u, _labels, all_center_batch, options['num_classes'], options['legendname'], epoch, prefix='test_k')
     #plot_features(all_features_u, _labels, options['num_classes'], epoch, prefix='test_u')
     # Out-of-Distribution detction evaluation
     x1, x2 = np.max(_pred_k, axis=1), np.max(_pred_u, axis=1)
@@ -75,7 +80,7 @@ def test(current_time, net, criterion, testloader, outloader, epoch=None, **opti
 
     return results
 
-def plot_features(current_time, all_features_k, all_features_u, labels, num_classes, legendname, epoch, prefix):
+def plot_features(current_time, all_features_k, all_features_u, labels, all_center_batch, num_classes, legendname, epoch, prefix):
     """Plot features on 2D plane.
 
     Args:
@@ -98,6 +103,16 @@ def plot_features(current_time, all_features_k, all_features_u, labels, num_clas
             s=1,
         )
     legendname.append('unknown')
+
+    plt.scatter(
+            all_center_batch[:,0],
+            all_center_batch[:,1],
+            c='0',
+            marker= '^',
+            s=1,
+        )
+    legendname.append('reciprocal point')
+
     plt.legend(legendname, loc='upper right')
     dirname = osp.join('log', current_time, prefix)
     if not osp.exists(dirname):

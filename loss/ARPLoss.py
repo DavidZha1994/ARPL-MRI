@@ -27,6 +27,7 @@ class ARPLoss(nn.CrossEntropyLoss):
         loss = F.cross_entropy(logits / self.temp, labels)
 
         center_batch = self.points[labels, :]
+
         _dis_known = (x - center_batch).pow(2).mean(1)
         if self.use_gpu:
             target = torch.ones(_dis_known.size()).cuda()
@@ -36,7 +37,7 @@ class ARPLoss(nn.CrossEntropyLoss):
 
         loss = loss + self.weight_pl * loss_r
 
-        return logits, loss
+        return logits, loss, center_batch, _dis_known
 
     def fake_loss(self, x):
         logits = self.Dist(x, center=self.points)
