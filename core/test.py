@@ -28,7 +28,7 @@ def test(current_time, net, criterion, testloader, outloader, epoch=None, **opti
             
             with torch.set_grad_enabled(False):
                 x, y = net(data, True)
-                logits, _, center_batch = criterion(x, y)
+                logits, _ = criterion(x, y)
                 center_batch = center_batch.center_batch(x, y)
                 predictions = logits.data.max(1)[1]
                 total += labels.size(0)
