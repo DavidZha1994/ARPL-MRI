@@ -119,5 +119,5 @@ def plot_features(current_time, all_features_k, all_features_u, labels, all_cent
     if not osp.exists(dirname):
         os.makedirs(dirname)
     save_name = osp.join(dirname, 'epoch_' + str(epoch+1) + '.png')
-    plt.savefig(save_name, bbox_inches='tight')
+    plt.savefig(save_name, bbox_inches='tight', dpi = 300)
     plt.close()
