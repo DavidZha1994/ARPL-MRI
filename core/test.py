@@ -114,7 +114,7 @@ def plot_features(current_time, all_features_k, all_features_u, labels, all_cent
         )
     legendname.append('reciprocal point')
 
-    plt.legend(legendname, loc='upper right')
+    plt.legend(legendname, loc= (1.1,0.5))
     dirname = osp.join('log', current_time, prefix)
     if not osp.exists(dirname):
         os.makedirs(dirname)
