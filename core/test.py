@@ -29,7 +29,7 @@ def test(current_time, net, criterion, testloader, outloader, epoch=None, **opti
             with torch.set_grad_enabled(False):
                 x, y = net(data, True)
                 logits, _ = criterion(x, y)
-                center_batch = center_batch.center_batch(x, y)
+                center_batch = criterion.center_batch(x, y)
                 predictions = logits.data.max(1)[1]
                 total += labels.size(0)
                 correct += (predictions == labels.data).sum()
@@ -48,7 +48,7 @@ def test(current_time, net, criterion, testloader, outloader, epoch=None, **opti
             with torch.set_grad_enabled(False):
                 x, y = net(data, True)
                 logits, _ = criterion(x, y)
-                center_batch = center_batch.center_batch(x, y)
+                center_batch = criterion.center_batch(x, y)
                 all_features_u.append(x.data.cpu().numpy())
                 _pred_u.append(logits.data.cpu().numpy())
                 all_center_batch.append(center_batch.data.cpu().numpy())
@@ -100,7 +100,7 @@ def plot_features(current_time, all_features_k, all_features_u, labels, all_cent
     plt.scatter(
             all_features_u[:,0],
             all_features_u[:,1],
-            c='0',
+            c='0.5',
             s=1,
         )
     legendname.append('unknown')
