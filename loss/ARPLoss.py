@@ -37,7 +37,7 @@ class ARPLoss(nn.CrossEntropyLoss):
 
         loss = loss + self.weight_pl * loss_r
 
-        return logits, loss, center_batch, _dis_known
+        return logits, loss
 
     def fake_loss(self, x):
         logits = self.Dist(x, center=self.points)
@@ -45,3 +45,7 @@ class ARPLoss(nn.CrossEntropyLoss):
         loss = (prob * torch.log(prob)).sum(1).mean().exp()
 
         return loss
+
+    def center_batch(self, x, y, labels=None):
+        center_batch = self.points[labels, :]
+        return center_batch
